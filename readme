@@ -1,0 +1,33 @@
+Reference: Prediction of Neural Diameter From Morphology to Enable Accurate Simulation
+Jonathan D Reed and Kim Blackwell
+Fronteirs in Neuroinformatics, 2021
+
+Many neuron morphologies in NeuroMorpho.org do not contain accurate dendritic diameters that are needed for simulations. We used a set of archives which did have realistic morphologies to derive equations predicting dendritic diameter, and to create morphologies using the predictions.
+The equations and new morphologies are derived by
+1. extracting morphology features from swc files (morph_feature_extract.py)
+2. using multiple regression to derive equations predicting diameter, (morph_feature_extract.py )
+3. using the equations to create the new morphology files from original swc file (shape_shifter.py).
+The python programs are all available from github.com/neurord/ShapeShifter
+
+We simulated the original morphologies and the morphologies with predicted diameter in Moose, evaluating the response to current injection and synaptic input. 
+
+Usage:
+A. current injection:
+python3 MooseSim_2020.py pfile_name stim_delay stim_dur stim_amplitude sim_time
+example:
+python3 MooseSim_2020.py ri06_mod.CNG_org 5e-3 1e-3 1.5e-9 100e-3
+
+B. synaptic input - make stim_amplitude 0:
+python3 MooseSim_2020.py pfile_name stim_delay stim_dur 0 sim_time comp_name syn_conductance
+example:
+python3 MooseSim_2020.py Purkinje-slice-ageP35-1.CNG_org 10e-3 80e-3 0 400e-3 12_3 10e-9
+python3 MooseSim_2020.py Purkinje-slice-ageP35-1.CNG_pred 10e-3 80e-3 0 400e-3 12_3 10e-9
+python3 MooseSim_2020.py Purkinje-slice-ageP35-1.CNG_pred_i 10e-3 80e-3 0 400e-3 12_3 10e-9
+
+After simulating both original and predicted morphologies, generate graphs comparing the morphologies by running
+python3 compare_morph_sims.py
+
+In compare_morph_sims.py, it is necessary to uncomment the file name and synapse compartment according to the files to be compared.
+
+Running the three MooseSim_2020 simulations for the Purkinje file (in B above) and then compare_morph_sims.py will generate Fig 10B from the publication.
+
